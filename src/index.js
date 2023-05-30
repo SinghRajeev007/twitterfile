@@ -6,7 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import SignIn from './components/pages/LoginPage/login';
 import SignUp from './components/pages/RegisterPage/register';
 import {createBrowserRouter,RouterProvider} from 'react-router-dom'
-import ForgotPasword from './components/pages/ForgotPasswordPage/ForgotPasword';
+import ResetPasword from './components/pages/ResetPasswordPage/RestPasword';
+import ForgotPassword from "./components/pages/ForgetPasswodPage/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,12 @@ const router = createBrowserRouter([
     element:<SignUp/>
   },
   {path:"/reset",
-  element:<ForgotPasword/>
-  }
+  element:<ResetPasword/>
+  },
+
+ {path:"/forget",
+ element:<ForgotPassword/>
+ }
 
 ]);
 

@@ -1,13 +1,13 @@
 import React from "react";
 import TwitterIcon from "@mui/icons-material/Twitter";
-import styles from "./ForgetPassword.module.css";
+import styles from "./ResetPassword.module.css";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl, { useFormControl } from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
-export default function ForgotPasword() {
+export default function ResetPasword() {
   return (
     <div>
       <div className={`${styles.flx} ${styles.justifyCenter}`} style={{ borderBottom: "1px", boxShadow: "0 .8px #aaa" }}>
