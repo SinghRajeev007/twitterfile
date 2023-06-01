@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import GoogleButton from "../../atoms/button/google";
 import AppleButton from "../../atoms/button/apple";
 import TextField from "@mui/material/TextField";
@@ -8,34 +8,47 @@ import { RxCross2 } from "react-icons/rx";
 import styles from "./login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
-import { useState } from "react";
 import Password from "./Password";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [usererr, setusererr] = useState(true);
+  const [isEmailFound, setIsEmailFound] = useState(true);
   const [isPasswordPage, setIsPasswordPage] = useState(false);
   const [data, setdata] = useState([]);
+
+  useEffect(() => {
+    let timer;
+    if(!isEmailFound) {
+      timer = setTimeout(() => {
+        setIsEmailFound(true);
+      }, 3000)
+    }
+
+    return () => clearTimeout(timer);
+  }, [isEmailFound])
 
   function userHandle(e) {
     setdata(e.target.value);
     setEmail(e.target.value);
   }
 
-  function handlenavigate() {
-    navigate("/password");
-  }
+  function onNext() {    
+    const lclStorageData = JSON.parse(localStorage.getItem("signupData"))
 
-  function onNext() {
+    const isUserFound = lclStorageData.filter(el => {
+      if(el.email === email) {
+        return true;
+      }
+    }).length;
+
+    if(!isUserFound) {
+      setIsEmailFound(false)
+      return;
+    }
+
     setIsPasswordPage(true);
-    // const data = localStorage.getItem("email", email);
 
-    // if (data.length < 3) {
-    //   setusererr(true);
-    // } else {
-    //   setusererr(false);
-    // }
   }
 
   return (
@@ -92,12 +105,10 @@ const SignIn = () => {
             <b>Don't have an account? </b>
             <Link to="/register">Sign up</Link>
           </div>
-          {usererr ? (
+          {!isEmailFound && (
             <Alert severity="info">
               <strong>Sorry, we could not find your account.</strong>
             </Alert>
-          ) : (
-            handlenavigate()
           )}
         </div>
       </div> : <Password email={email}/> }
