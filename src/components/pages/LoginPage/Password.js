@@ -1,19 +1,29 @@
-import React from "react";
 import { FaTwitter } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+import React, { useEffect, useState } from "react";
+import TwitterIcon from "@mui/icons-material/Twitter";
 import TextField from "@mui/material/TextField";
 import styles from "./Password.module.css";
 import Button from "@mui/material/Button";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
 
-export default function Password() {
+export default function Password({email}) {
   const navigate = useNavigate();
 
   const [password, setpassword] = useState("");
   const [message, setmessage] = useState(false);
 
+  useEffect(() => {
+    let timer;
+    if(message) {
+      timer = setTimeout(() => {
+        setmessage(false);
+      }, 3000)
+    }
+
+    return () => clearTimeout(timer);
+  }, [message])
   function handleChange(e) {
     setpassword(e.target.value);
   }
@@ -22,8 +32,19 @@ export default function Password() {
     const validation = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,}$/;
     if (!validation.test(password)) {
       setmessage(true);
-    } else {
-      navigate("/home");
+      return;
+    }
+
+    const lclStorageData = JSON.parse(localStorage.getItem("signupData"))
+
+    const isUserFound = lclStorageData.filter(el => {
+      if(el.email === email) {
+        return true;
+      }
+    }).length;
+
+    if(isUserFound) {
+      return navigate('/home');
     }
   }
 
@@ -55,10 +76,7 @@ export default function Password() {
             </div>
           </div>
           <Button
-            onClick={() => {
-              navigate("/home");
-              handleClick();
-            }}
+            onClick={handleClick}
             className={styles.btn}
             variant="contained"
             sx={{

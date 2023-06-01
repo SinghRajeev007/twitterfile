@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import GoogleButton from "../../atoms/button/google";
 import AppleButton from "../../atoms/button/apple";
 import TextField from "@mui/material/TextField";
@@ -8,13 +8,14 @@ import { RxCross2 } from "react-icons/rx";
 import styles from "./login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
-import { useState } from "react";
+import Password from "./Password";
 
 const SignIn = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
-  const [usererr, setusererr] = useState(false);
+  const [isEmailFound, setIsEmailFound] = useState(true);
+  const [isPasswordPage, setIsPasswordPage] = useState(false);
   const [data, setdata] = useState([]);
   const [alert, setalert] = useState(false);
 
@@ -22,29 +23,43 @@ const SignIn = () => {
     navigate("/forgot");
   }
 
+  useEffect(() => {
+    let timer;
+    if(!isEmailFound) {
+      timer = setTimeout(() => {
+        setIsEmailFound(true);
+      }, 3000)
+    }
+
+    return () => clearTimeout(timer);
+  }, [isEmailFound])
+
   function userHandle(e) {
     setdata(e.target.value);
     setEmail(e.target.value);
   }
 
-  function handlenavigate() {
-    navigate("/password");
-  }
+  function onNext() {    
+    const lclStorageData = JSON.parse(localStorage.getItem("signupData"))
 
-  function onclick() {
-    localStorage.setItem("email", email);
+    const isUserFound = lclStorageData.filter(el => {
+      if(el.email === email) {
+        return true;
+      }
+    }).length;
 
-    if (data.length < 10) {
-      setusererr(false);
-      setalert(true);
-    } else {
-      setusererr(true);
+    if(!isUserFound) {
+      setIsEmailFound(false)
+      return;
     }
+
+    setIsPasswordPage(true);
+
   }
 
   return (
     <div>
-      <div className={styles.page}>
+      {!isPasswordPage ? <div className={styles.page}>
         <div className={styles.Icon}>
           <RxCross2 />
 
@@ -69,7 +84,7 @@ const SignIn = () => {
           />
 
           <Button
-            onClick={onclick}
+            onClick={onNext}
             className={styles.btn}
             style={{
               textTransform: "none",
@@ -101,18 +116,13 @@ const SignIn = () => {
             <b>Don't have an account? </b>
             <Link to="/register">Sign up</Link>
           </div>
-          <div className={styles.Alert}>
-            {usererr ? handlenavigate() : " "}
-            {alert ? (
-              <Alert severity="info">
-                <strong>Sorry, we could not find your account.</strong>
-              </Alert>
-            ) : (
-              " "
-            )}
-          </div>
+          {!isEmailFound && (
+            <Alert severity="info">
+              <strong>Sorry, we could not find your account.</strong>
+            </Alert>
+          )}
         </div>
-      </div>
+      </div> : <Password email={email}/>}
     </div>
   );
 };
