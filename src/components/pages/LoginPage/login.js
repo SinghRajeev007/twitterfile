@@ -9,11 +9,13 @@ import styles from "./login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
 import { useState } from "react";
+import Password from "./Password";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [usererr, setusererr] = useState(true);
+  const [isPasswordPage, setIsPasswordPage] = useState(false);
   const [data, setdata] = useState([]);
 
   function userHandle(e) {
@@ -25,19 +27,20 @@ const SignIn = () => {
     navigate("/password");
   }
 
-  function onclick() {
-    localStorage.setItem("email", email);
+  function onNext() {
+    setIsPasswordPage(true);
+    // const data = localStorage.getItem("email", email);
 
-    if (data.length < 3) {
-      setusererr(true);
-    } else {
-      setusererr(false);
-    }
+    // if (data.length < 3) {
+    //   setusererr(true);
+    // } else {
+    //   setusererr(false);
+    // }
   }
 
   return (
     <div>
-      <div className={styles.page}>
+      {!isPasswordPage ? <div className={styles.page}>
         <div className={styles.Icon}>
           <RxCross2 />
           <FaTwitter color="skyblue" />
@@ -60,7 +63,7 @@ const SignIn = () => {
             value={email}
           />
           <Button
-            onClick={onclick}
+            onClick={onNext}
             className={styles.btn}
             style={{
               textTransform: "none",
@@ -97,7 +100,7 @@ const SignIn = () => {
             handlenavigate()
           )}
         </div>
-      </div>
+      </div> : <Password email={email}/> }
     </div>
   );
 };
